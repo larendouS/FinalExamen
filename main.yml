@@ -1,0 +1,35 @@
+name: Build and Release WinForms
+
+on:
+  push:
+    branches: [ "main" ] # Se activa cada vez que haces push a main
+
+jobs:
+  build:
+    runs-on: windows-latest # ¡Vital! Necesitamos Windows para compilar .NET 4.8
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    - name: Configurar MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Restaurar paquetes NuGet
+      run: nuget restore tu-proyecto.sln # Cambia "tu-proyecto" por el nombre de tu archivo .sln
+
+    - name: Compilar en modo Release
+      run: msbuild tu-proyecto.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Comprimir el ejecutable
+      run: |
+        powershell Compress-Archive -Path bin/Release/* -DestinationPath Proyecto-Compilado.zip
+
+    - name: Crear Release en GitHub
+      uses: softprops/action-gh-release@v1
+      with:
+        files: Proyecto-Compilado.zip
+        tag_name: v${{ github.run_number }}
+        name: Release Automática ${{ github.run_number }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
