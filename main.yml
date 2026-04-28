@@ -2,11 +2,11 @@ name: Build and Release WinForms
 
 on:
   push:
-    branches: [ "main" ] # Se activa cada vez que haces push a main
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: windows-latest # ¡Vital! Necesitamos Windows para compilar .NET 4.8
+    runs-on: windows-latest 
 
     steps:
     - name: Checkout del código
@@ -16,7 +16,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Restaurar paquetes NuGet
-      run: nuget restore tu-proyecto.sln # Cambia "tu-proyecto" por el nombre de tu archivo .sln
+      run: nuget restore tu-proyecto.sln 
 
     - name: Compilar en modo Release
       run: msbuild tu-proyecto.sln /p:Configuration=Release /p:Platform="Any CPU"
